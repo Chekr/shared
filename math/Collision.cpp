@@ -1,10 +1,5 @@
 #include "Collision.h"
 
-/*
-bool LineCollision(const Point& A1, const Point& A2,
-	const Point& B1, const Point& B2,
-	double* out = 0)
-	*/
 bool LineCollision(const Vec2f& A1, const Vec2f& A2,
 	const Vec2f& B1, const Vec2f& B2)
 {
