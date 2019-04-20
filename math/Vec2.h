@@ -23,11 +23,11 @@ public:
 	{
 		return Vec2(x + v.x, y + v.y);
 	}
-	Vec2& operator+= (const Vec2 &r)
+	Vec2& operator += (const Vec2 &r)
 	{
 		x += r.x, y += r.y; return*this;
 	}
-	Vec2& operator-= (const Vec2 &r)
+	Vec2& operator -= (const Vec2 &r)
 	{
 		x -= r.x, y -= r.y; return*this;
 	}
@@ -39,7 +39,7 @@ public:
 	{
 		return Vec2(x / r, y / r);
 	}
-	Vec2 operator* (const T &r) const
+	Vec2 operator * (const T &r) const
 	{
 		return Vec2(x* r, y* r);
 	}
@@ -47,15 +47,15 @@ public:
 	{
 		x /= r, y /= r; return*this;
 	}
-	Vec2& operator*= (const T &r)
+	Vec2& operator *= (const T &r)
 	{
 		x *= r, y *= r; return*this;
 	}
-	bool operator== (const Vec2 &v) const
+	bool operator == (const Vec2 &v) const
 	{
 		return (x == v.x && y == v.y);
 	}
-	bool operator!= (const Vec2 &v) const
+	bool operator != (const Vec2 &v) const
 	{
 		return !(x == v.x && y == v.y);
 	}
@@ -70,12 +70,12 @@ public:
 	Vec2& normalize()
 	{
 		T n = norm();
-		if (n > 0) {
+		if (!IsZero(n) && n > 0) {
 			T factor = 1 / sqrt(n);
 			x *= factor, y *= factor;
 		}
 
-		return*this;
+		return *this;
 	}
 	Vec2& truncate(T limit)
 	{
@@ -86,7 +86,7 @@ public:
 			*this *= limit;
 		}
 
-		return*this;
+		return *this;
 	}
 	Vec2 perpendicular()
 	{
