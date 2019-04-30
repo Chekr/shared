@@ -9,13 +9,9 @@
 #include <iostream>
 #include <cmath>
 
-
-
 #include "MathHelpers.h"
 #include "Vec2.h"
 
-// NOTE: Operations are done by hand rather than double-for loops. It's
-//       marginally faster that way.
 template<typename T>
 class Matrix3x3
 {

@@ -18,6 +18,10 @@ const float g_twoPi     = g_pi * 2.0f;
 const float g_halfPi    = g_pi / 2.0f;
 const float g_quarterPi = g_pi / 4.0f; 
 
+inline bool IsZero(int val)
+{
+	return (val == 0);
+}
 
 inline bool IsZero(float val)
 {
