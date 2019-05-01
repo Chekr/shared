@@ -13,8 +13,6 @@ using std::strspn;
 using std::strcspn;
 using std::string;
 
-#include "../StringTokenizer/StringTokenizer.h"
-
 
 //enum StringType
 //{
@@ -68,8 +66,8 @@ static int ParseInt(const char *&token)
 
 static void ParseInt2(int &x, int &y, const char *&token)
 {
-	x = parseInt(token);
-	y = parseInt(token);
+	x = ParseInt(token);
+	y = ParseInt(token);
 }
 
 
@@ -203,8 +201,8 @@ static float ParseFloat(const char *&token)
 
 static void ParseFloat2(float &x, float &y, const char *&token)
 {
-	x = parseFloat(token);
-	y = parseFloat(token);
+	x = ParseFloat(token);
+	y = ParseFloat(token);
 }
 
 static string& LTrim(string& s)
@@ -266,7 +264,7 @@ static bool IsTrue(const std::string& s)
 	if(stringBool == "T") { return true; }
 	if(stringBool == "TRUE") { return true; }
 
-	if(isInteger(stringBool))
+	if(IsInteger(stringBool))
 	{
 		return stoi(stringBool) != 0;
 	}

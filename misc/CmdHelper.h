@@ -3,6 +3,12 @@
 
 #include <string>
 #include <algorithm>
+#include <iostream>
+using std::cout;
+using std::cin;
+using std::endl;
+
+
 #include "ParsingHelper.h"
 
 #include <thread>
@@ -72,7 +78,7 @@ static bool ConfirmOption()
 {
 	string line;
 	std::getline(cin, line);
-	line = ToUpperCase(trim(line));
+	line = ToUpperCase(Trim(line));
 	while(true)
 	{
 		if(line == "Y")
@@ -85,7 +91,7 @@ static bool ConfirmOption()
 		}
 		cout << "Invalid selection (y/n): ";
 		std::getline(cin, line);
-		line = ToUpperCase(trim(line));
+		line = ToUpperCase(Trim(line));
 	}
 }
 
