@@ -15,15 +15,15 @@ namespace Timer
 		public:
 			Timer()
 			{
-				m_offset = steady_clock::duration::zero();
 				m_isRunning = false;
+				m_isReset = true;
 			}
 			void Start()
 			{
 				if (!m_isRunning)
 				{
-					m_startTime = steady_clock::now();
-
+					m_startPoint = m_isReset ? steady_clock::now() : steady_clock::now() - (m_stopPoint - m_startPoint);
+					m_isReset = false;
 					m_isRunning = true;
 				}
 			}
@@ -31,27 +31,30 @@ namespace Timer
 			{
 				if (m_isRunning)
 				{
-					m_offset += (steady_clock::now() - m_startTime);
-
+					m_stopPoint = steady_clock::now();
 					m_isRunning = false;
 				}
 			}
+
 			void ResetAndStop()
 			{
-				m_offset = steady_clock::duration::zero();
-				m_startTime = steady_clock::now();
 				m_isRunning = false;
+				m_isReset = true;
 			}
+
 			double GetElapsedTimeInSeconds()
 			{
-				std::chrono::duration<double> elapsedTime = steady_clock::duration::zero();
-
+				if(m_isReset)
+				{
+					return 0.0f;
+				}
+				
 				if (m_isRunning)
 				{
-					elapsedTime = std::chrono::duration_cast<std::chrono::duration<double>>(steady_clock::now() - m_startTime);
+					return std::chrono::duration_cast<std::chrono::duration<double>>(steady_clock::now() - m_startPoint).count();
 				}
 
-				return (elapsedTime + m_offset).count();
+				return std::chrono::duration_cast<std::chrono::duration<double>>(m_stopPoint - m_startPoint).count();
 			}
 
 			bool IsRunning()
@@ -60,9 +63,10 @@ namespace Timer
 			}
 
 		private:
-			std::chrono::duration<double> m_offset;
-			TimePoint m_startTime;
+			TimePoint m_startPoint;
+			TimePoint m_stopPoint;
 			bool m_isRunning;
+			bool m_isReset;
 	};
 }
 
