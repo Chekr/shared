@@ -1,5 +1,5 @@
-#include "Vec3.h"
-#include "Quaternion.h"
+#include "vec3.h"
+#include "quaternion.h"
 
 template<typename T>
 Vec3<T> & Vec3<T>::rotate(float angle, const Vec3& axis)

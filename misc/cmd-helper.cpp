@@ -9,7 +9,7 @@ using std::cin;
 using std::endl;
 
 
-#include "ParsingHelper.h"
+#include "parsing-helper.h"
 
 #include <thread>
 #include <chrono>

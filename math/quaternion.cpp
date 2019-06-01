@@ -1,6 +1,6 @@
-#include "Quaternion.h"
+#include "quaternion.h"
 
-#include "Vec3.h"
+#include "vec3.h"
 
 Quaternion operator*(const Quaternion& l, const Quaternion& r)
 {

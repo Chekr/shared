@@ -9,7 +9,7 @@ using std::map;
 #include <string>
 using std::string;
 
-#include "MathHelpers.h"
+#include "math-helpers.h"
 
 template<typename T>
 class DiscreteBspList

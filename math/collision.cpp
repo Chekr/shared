@@ -1,4 +1,4 @@
-#include "Collision.h"
+#include "collision.h"
 
 bool LineCollision(const Vec2f& A1, const Vec2f& A2,
 	const Vec2f& B1, const Vec2f& B2)

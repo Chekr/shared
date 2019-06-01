@@ -1,6 +1,6 @@
-#include "FileHelper.h"
+#include "file-helper.h"
 
-#include "Log.h"
+#include "log.h"
 
 #include <experimental/filesystem> // C++-standard header file name  
 

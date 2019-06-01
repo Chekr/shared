@@ -9,8 +9,8 @@
 #include <iostream>
 #include <cmath>
 
-#include "MathHelpers.h"
-#include "Vec3.h"
+#include "math-helpers.h"
+#include "vec3.h"
 
 template<typename T>
 class Matrix4x4

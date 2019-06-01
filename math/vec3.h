@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "MathHelpers.h"
+#include "math-helpers.h"
 
 template<typename T>
 class Vec3

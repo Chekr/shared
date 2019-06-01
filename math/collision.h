@@ -7,7 +7,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
-#include "Vec2.h"
+#include "vec2.h"
 
 namespace Collision
 {
