@@ -1,7 +1,7 @@
 #ifndef _GEO_HELPERS_H_
 #define _GEO_HELPERS_H_
 
-#include "../math/Vec2.h"
+#include "../math/vec2.h"
 
 
 
