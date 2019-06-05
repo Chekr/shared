@@ -22,6 +22,11 @@ public:
 		return s << id.Get();
 	}
 
+	void operator=(const string &s )
+	{
+		Set(s);
+	}
+
 	string Get() const
 	{
 		return m_uuid.empty() ? EmptyUuid : m_uuid;
@@ -58,7 +63,7 @@ private:
 	string m_uuid;
 
 public:
-	const string EmptyUuid = "00000000000000000000000000000000";
+	static inline string EmptyUuid = "00000000000000000000000000000000";
 };
 
 
