@@ -17,13 +17,13 @@ class DiscreteBspList
 public:
 	DiscreteBspList(map<T, float> items) : gen(rd())
 	{
-		for(auto item : m_items)
+		for(auto item : items)
 		{
 			m_values.push_back(item.first);
 			m_weights.push_back(item.second);
 		}
 
-		m_d = new std::discrete_distribution<int>(m_weights.begin(), weights.end());
+		m_d = new std::discrete_distribution<int>(m_weights.begin(), m_weights.end());
 	}
 
 	~DiscreteBspList()

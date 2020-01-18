@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
+#include <iomanip>
 
 using std::strspn;
 using std::strcspn;
@@ -270,6 +271,23 @@ static bool IsTrue(const std::string& s)
 	}
 	return false;
 
+}
+
+
+
+static std::string BoolToString(const bool& value)
+{
+	return value ? "true" : "false";
+}
+
+template <class T>
+inline std::string TypeToString(const T& t, int precision = 2)
+{
+	std::ostringstream buffer;
+
+	buffer << std::fixed << std::setprecision(precision) << t;
+
+	return buffer.str();
 }
 
 #endif

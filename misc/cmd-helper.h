@@ -95,9 +95,10 @@ static bool ConfirmOption()
 	}
 }
 
-static void SafeSleep(int timeToSleepInSeconds)
+static void SafeSleep(long milliseconds)
 {
-	std::this_thread::sleep_for(std::chrono::seconds(timeToSleepInSeconds));
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
 

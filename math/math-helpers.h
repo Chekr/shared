@@ -34,7 +34,7 @@ inline int RandInt(int low,int high)
     return rand()%(high-low+1)+low;
 }
 
-// Return value between -1.0f anf 1.0f
+// Return value between 0.0f and 1.0f
 inline float RandFloat()
 {
 	return ((rand())/(RAND_MAX+1.0f));
@@ -47,11 +47,10 @@ inline float RandInRange(float low, float high)
 
 inline bool RandBool()
 {
-    if (RandFloat() > 0.5) return true;
-
-    else return false;
+    return (RandFloat() > 0.5);
 }
 
+// Return value between -1.0f and 1.0f
 inline float RandomClamped()
 {
 	return RandFloat() - RandFloat();
@@ -100,5 +99,11 @@ inline int GetNearestRotationStep(float angle, float steps, float angleOffset = 
 	return static_cast<int>(angle);
 }
 
+inline float Clamp(float input, float min, float max)
+{
+	return input < min ? 
+		min : input > max ? 
+			max : input;
+}
 
 #endif
