@@ -41,7 +41,7 @@ public:
 
 		if (currentTimeInSeconds >= m_nextUpdateTime)
 		{
-			m_dwNextUpdateTime = currentTimeInSeconds + m_timeToWait;
+			m_nextUpdateTime = currentTimeInSeconds + m_timeToWait;
 
 			return true;
 		}

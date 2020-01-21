@@ -106,4 +106,9 @@ inline float Clamp(float input, float min, float max)
 			max : input;
 }
 
+inline float Maximum(const float& a, const float& b)
+{
+	return a > b ? a : b;
+}
+
 #endif

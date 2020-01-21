@@ -9,6 +9,7 @@
 #include <functional>
 #include <cmath>
 #include <iomanip>
+#include <fstream>
 
 using std::strspn;
 using std::strcspn;
@@ -289,5 +290,20 @@ inline std::string TypeToString(const T& t, int precision = 2)
 
 	return buffer.str();
 }
+
+template <typename T>
+inline T GetValueFromStream(std::ifstream& stream)
+{
+  T val;
+  stream >> val;
+
+  if (!stream.is_open())
+  {
+    throw std::runtime_error("Invalid type parsed from stream.");
+  }
+
+  return val;
+}
+
 
 #endif
