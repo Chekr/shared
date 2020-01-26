@@ -1,5 +1,5 @@
-#ifndef _DISCRETE_LIST_H_
-#define _DISCRETE_LIST_H_
+#ifndef DISCRETE_LIST_H
+#define DISCRETE_LIST_H
 
 #include <vector>
 using std::vector;

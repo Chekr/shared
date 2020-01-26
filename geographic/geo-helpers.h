@@ -1,5 +1,5 @@
-#ifndef _GEO_HELPERS_H_
-#define _GEO_HELPERS_H_
+#ifndef GEO_HELPERS_H
+#define GEO_HELPERS_H
 
 #include "../math/vec2.h"
 

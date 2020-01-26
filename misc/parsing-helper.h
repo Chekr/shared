@@ -1,6 +1,6 @@
-#ifndef _PARSING_HELPER_H_
+#ifndef PARSING_HELPER_H
 #pragma once
-#define _PARSING_HELPER_H_
+#define PARSING_HELPER_H
 
 #include <string>
 #include <cstring>

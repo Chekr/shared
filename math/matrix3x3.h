@@ -1,6 +1,6 @@
-#ifndef _MATRIX_3_X_3_H_
+#ifndef MATRIX_3_X_3_H
 #pragma once
-#define _MATRIX_3_X_3_H_
+#define MATRIX_3_X_3_H
 
 #include <cstdlib> 
 #include <cstdio> 

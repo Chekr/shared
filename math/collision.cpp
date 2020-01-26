@@ -43,9 +43,9 @@ Collision::INTERSECT_RESULT LineSegmentIntersection(const Vec2f& p0, const Vec2f
 	float nume_b = ((p1.x - p0.x)*(p0.y - p2.y)) -
 				((p1.y - p0.y)*(p0.x - p2.x));
 
-	if (denom == 0.0f)
+	if (IsZero(denom))
 	{
-		if (nume_a == 0.0f && nume_b == 0.0f)
+		if (IsZero(nume_a) && IsZero(nume_b))
 		{
 			return Collision::COINCIDENT;
 		}
@@ -178,4 +178,11 @@ bool IsPointInsidePolygon(const vector<Vec2f>& polygon, const Vec2f& p, const fl
 	} while(i != 0);
 
 	return count&1; // same as (count%2 == 1)
+}
+
+bool IsPointInFov(const Vec2f& pos, const Vec2f& heading, const Vec2f& target, const float& fov)
+{
+	Vec2f toTarget = (target - pos).normalize();
+
+	return pos.dot(toTarget) >= cos(fov/2.0f);
 }

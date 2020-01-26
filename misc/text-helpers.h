@@ -1,5 +1,5 @@
-#ifndef _TEXT_HELPERS_H_
-#define _TEXT_HELPERS_H_
+#ifndef TEXT_HELPERS_H
+#define TEXT_HELPERS_H
 
 #include <random>
 #include <algorithm>

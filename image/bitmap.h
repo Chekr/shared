@@ -1,6 +1,6 @@
-#ifndef _BITMAP_H_
+#ifndef BITMAP_H
 #pragma once
-#define _BITMAP_H_
+#define BITMAP_H
 
 #include <fstream>
 #include <vector>

@@ -1,6 +1,6 @@
-#ifndef _FILE_HELPER_H_
+#ifndef FILE_HELPER_H
 #pragma once
-#define _FILE_HELPER_H_
+#define FILE_HELPER_H
 
 #include <string>
 #include <iostream>

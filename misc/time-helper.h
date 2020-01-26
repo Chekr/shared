@@ -1,5 +1,5 @@
-#ifndef _TIME_HELPER_H_
-#define _TIME_HELPER_H_
+#ifndef TIME_HELPER_H
+#define TIME_HELPER_H
 
 #include <string>
 #include <sstream>

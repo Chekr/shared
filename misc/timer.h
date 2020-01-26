@@ -1,6 +1,6 @@
-#ifndef _TIMER_H_
+#ifndef TIMER_H
 #pragma once
-#define _TIMER_H_
+#define TIMER_H
 
 #include <chrono>
 

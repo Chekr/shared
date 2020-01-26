@@ -1,6 +1,6 @@
-#ifndef _LOG_H_
+#ifndef LOG_H
 #pragma once
-#define _LOG_H_
+#define LOG_H
 
 #include <chrono>
 #include <string>

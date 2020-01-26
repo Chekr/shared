@@ -1,6 +1,6 @@
-#ifndef _QUATERNION_H_
+#ifndef QUATERNION_H
 #pragma once
-#define _QUATERNION_H_
+#define QUATERNION_H
 
 #include <math.h>
 

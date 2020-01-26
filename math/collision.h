@@ -1,6 +1,6 @@
-#ifndef _COLLISION_H_
+#ifndef COLLISION_H
 #pragma once
-#define _COLLISION_H_
+#define COLLISION_H
 
 #include <string>
 using std::string;
@@ -37,6 +37,6 @@ float DistanceSqrd(const Vec2f& pt1, const Vec2f& pt2);
 float Distance(const Vec2f& pt1, const Vec2f& pt2);
 Collision::WINDING FindTripletOrientation(const Vec2f& p, const Vec2f& q, const Vec2f& r);
 bool IsPointInsidePolygon(const vector<Vec2f>& polygon, const Vec2f& p, const float& polygonXMax);
-
+bool IsPointInFov(const Vec2f& pos, const Vec2f& heading, const Vec2f& target, const float& fov);
 
 #endif

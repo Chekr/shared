@@ -1,6 +1,6 @@
-#ifndef _THREAD_SAFE_QUEUE_
+#ifndef THREAD_SAFE_QUEUE_
 #pragma once
-#define _THREAD_SAFE_QUEUE_
+#define THREAD_SAFE_QUEUE_
 
 #include <queue>
 #include <mutex>

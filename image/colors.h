@@ -1,6 +1,6 @@
-#ifndef _COLOR_H_
+#ifndef COLOR_H
 #pragma once
-#define _COLOR_H_
+#define COLOR_H
 
 #pragma pack(push, 1)
 struct Rgb

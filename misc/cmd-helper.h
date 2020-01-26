@@ -1,5 +1,5 @@
-#ifndef _CMD_HELPER_H_
-#define _CMD_HELPER_H_
+#ifndef CMD_HELPER_H
+#define CMD_HELPER_H
 
 #include <string>
 #include <algorithm>

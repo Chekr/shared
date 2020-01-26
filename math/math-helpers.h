@@ -1,6 +1,6 @@
-#ifndef _MATH_HELPERS_H_
+#ifndef MATHHELPERS_H
 #pragma once
-#define _MATH_HELPERS_H_
+#define MATHHELPERS_H
 
 #include <stdlib.h> // rand(), RAND_MAX
 #include <limits>
@@ -110,5 +110,11 @@ inline float Maximum(const float& a, const float& b)
 {
 	return a > b ? a : b;
 }
+
+inline float Minimum(const float& a, const float& b)
+{
+	return a < b ? a : b;
+}
+
 
 #endif

@@ -1,6 +1,6 @@
-#ifndef _VEC4_H_
+#ifndef VEC4_H
 #pragma once
-#define _VEC4_H_
+#define VEC4_H
 
 #include <iostream>
 #include <cmath>
