@@ -36,7 +36,11 @@ public:
 	{
 		return Vec3(x - v.x, y - v.y, z -v.z);
 	}
-	Vec3 operator / (const T &r) const
+	Vec3 operator - () const
+    {
+        return Vec3(-x, -y, -z);
+    }
+	Vec3 operator/ (const T &r) const
 	{
 		return Vec3(x / r, y / r, z / r);
 	}
@@ -140,6 +144,7 @@ public:
 	//}
 
 	Vec3& rotate(float angle, const Vec3& axis);
+
 
 	T x, y, z;
 };

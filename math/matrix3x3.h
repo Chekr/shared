@@ -9,6 +9,8 @@
 #include <iostream>
 #include <cmath>
 
+#include <vector>
+
 #include "math-helpers.h"
 #include "vec2.h"
 
@@ -81,6 +83,28 @@ public:
 		t[6] = zero; t[7] = zero; t[8] = one;
 	}
 
+	void Rotation(T yaw, T pitch, T roll)
+	{
+		float cosH = cosf(yaw); 
+		float cosP = cosf(pitch); 
+		float cosR = cosf(roll); 
+		float sinH = sinf(yaw); 
+		float sinP = sinf(pitch); 
+		float sinR = sinf(roll); 
+	 
+		matrix[0][0] = cosR * cosH - sinR * sinP * sinH; 
+		matrix[0][1] = sinR * cosH + cosR * sinP * sinH; 
+		matrix[0][2] = -cosP * sinH; 
+ 
+		matrix[1][0] = -sinR * cosP; 
+		matrix[1][1] = cosR * cosP; 
+		matrix[1][2] = sinP; 
+	 
+		matrix[2][0] = cosR * sinH + sinR * sinP * cosH; 
+		matrix[2][1] = sinR * sinH - cosR * sinP * cosH; 
+		matrix[2][2] = cosP * cosH;
+	}
+
 	void Translate(T x, T y)
 	{
 		Matrix3x3 temp;
@@ -135,6 +159,8 @@ public:
 
 		*this *= temp;
 	}
+
+	
 
 	friend std::ostream& operator << (std::ostream &s, const Matrix3x3<T> &mat)
 	{

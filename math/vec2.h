@@ -35,9 +35,14 @@ public:
 	{
 		return Vec2(x - v.x, y - v.y);
 	}
+	Vec2 operator - () const
+	{
+		return Vec2(-x, -y);
+	}
 	Vec2 operator / (const T &r) const
 	{
-		return Vec2(x / r, y / r);
+		return IsZero(r) ? 
+			Vec2(0, 0) : Vec2(x / r, y / r);
 	}
 	Vec2 operator * (const T &r) const
 	{

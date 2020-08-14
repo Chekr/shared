@@ -91,6 +91,7 @@ inline float Normalize(float value, float start, float end)
 
 inline int GetNearestRotationStep(float angle, float steps, float angleOffset = 0.0f)
 {
+	if(IsZero(steps)) { return 0; }
 	float degreesPerStep = 360.0f / steps;
 	angle -= angleOffset;
 	angle += degreesPerStep / 2.0f;

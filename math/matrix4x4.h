@@ -9,6 +9,8 @@
 #include <iostream>
 #include <cmath>
 
+#include <vector>
+
 #include "math-helpers.h"
 #include "vec3.h"
 
@@ -84,6 +86,36 @@ public:
 		t[8] = zero; t[9] = zero; t[10] = one; t[11] = zero;
 		t[12] = zero; t[13] = zero; t[14] = zero; t[15] = one;
 	}
+
+	void Rotation(T yaw, T pitch, T roll)
+    {            
+        float cosH = cosf(yaw);   
+        float cosP = cosf(pitch);
+        float cosR = cosf(roll);
+        float sinH = sinf(yaw);
+        float sinP = sinf(pitch);
+        float sinR = sinf(roll);
+
+        matrix[0][0] = cosR * cosH - sinR * sinP * sinH;
+        matrix[0][1] = sinR * cosH + cosR * sinP * sinH;
+        matrix[0][2] = -cosP * sinH;
+		matrix[0][3] = 0.0f;
+ 
+        matrix[1][0] = -sinR * cosP;
+        matrix[1][1] = cosR * cosP;
+        matrix[1][2] = sinP;
+		matrix[1][3] = 0.0f;
+
+        matrix[2][0] = cosR * sinH + sinR * sinP * cosH;
+        matrix[2][1] = sinR * sinH - cosR * sinP * cosH;
+        matrix[2][2] = cosP * cosH;
+		matrix[2][3] = 0.0f;
+		
+		matrix[3][0] = 0.0f;
+		matrix[3][1] = 0.0f;
+		matrix[3][2] = 0.0f;
+		matrix[3][3] = 0.0f;
+    }
 
 	void Translate(T x, T y, T z)
 	{
