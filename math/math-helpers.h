@@ -23,10 +23,38 @@ inline bool IsZero(int val)
 	return (val == 0);
 }
 
+
 inline bool IsZero(float val)
 {
 	return ( (-g_minFloat < val) && (val < g_minFloat) );
 }
+
+/*
+// float
+typedef union {
+          float f;
+          struct {
+              unsigned int mantissa : 23;
+              unsigned int exponent : 8;
+              unsigned int sign :     1;
+          } parts;
+} float_cast;
+
+inline bool IsZero(float val)
+{
+	int flag = 0;
+	float_cast data;
+	data.f = val;
+
+	// Check both exponent and mantissa parts
+	if(data.parts.exponent == 0u && data.parts.mantissa == 0u)
+	{
+		return true;
+	}
+
+	return false;
+}
+*/
 
 inline int RandInt(int low,int high)
 {

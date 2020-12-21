@@ -48,6 +48,10 @@ public:
 	{
 		return Vec2(x* r, y* r);
 	}
+	Vec2 operator * (const Vec2 &v) const
+	{ 
+		return Vec2(x * v.x, y * v.y);
+	}
 	Vec2& operator /= (const T &r)
 	{
 		x /= r, y /= r; return*this;
@@ -72,6 +76,10 @@ public:
 	{
 		return Vec2(v.x* r, v.y* r);
 	}
+	friend Vec2 operator / (const T &r, const Vec2 &v) 
+	{
+		return Vec2<T>(r / v.x, r / v.y);
+	} 
 	Vec2& normalize()
 	{
 		T n = norm();
