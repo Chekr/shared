@@ -1,32 +1,33 @@
 #include "collision.h"
 
-bool LineCollision(const Vec2f& A1, const Vec2f& A2,
-	const Vec2f& B1, const Vec2f& B2)
+bool LineCollision(const Vec2f& a1, const Vec2f& a2,
+	const Vec2f& b1, const Vec2f& b2)
 {
-	Vec2f a(A2 - A1);
-	Vec2f b(B2 - B1);
+	Vec2f a(a2 - a1);
+	Vec2f b(b2 - b1);
 
 	double f = a.det(b);//PerpDot(a, b);
 	if (!f)      // lines are parallel
+	{
 		return false;
-
-	Vec2f c(B2 - A2);
+	}
+	Vec2f c(b2 - a2);
 	double aa = a.det(c);//PerpDot(a, c);
 	double bb = b.det(c);//PerpDot(b, c);
 
 	if (f < 0)
 	{
-		if (aa >= 0)     return false;
-		if (bb >= 0)     return false;
-		if (aa <= f)     return false;
-		if (bb <= f)     return false;
+		if (aa >= 0) { return false; }
+		if (bb >= 0) { return false; }
+		if (aa <= f) { return false; }
+		if (bb <= f) { return false; }
 	}
 	else
 	{
-		if (aa <= 0)     return false;
-		if (bb <= 0)     return false;
-		if (aa >= f)     return false;
-		if (bb >= f)     return false;
+		if (aa <= 0) { return false; }
+		if (bb <= 0) { return false; }
+		if (aa >= f) { return false; }
+		if (bb >= f) { return false; }
 	}
 
 	return true;
@@ -186,3 +187,160 @@ bool IsPointInFov(const Vec2f& pos, const Vec2f& heading, const Vec2f& target, c
 
 	return pos.dot(toTarget) >= cos(fov/2.0f);
 }
+
+bool IsPointInsideAabb(const Vec2f& p, const Aabb& rect)
+{
+	return (p.x >= rect.pos.x && p.y >= rect.pos.y && p.x < rect.pos.x + rect.size.x && p.y < rect.pos.y + rect.size.y);
+}
+
+bool IsCollidingAabbVsAabb(const Aabb& r1, const Aabb& r2)
+{
+	return (r1.pos.x < r2.pos.x + r2.size.x && r1.pos.x + r1.size.x > r2.pos.x && r1.pos.y < r2.pos.y + r2.size.y && r1.pos.y + r1.size.y > r2.pos.y);
+}
+
+// Adapted from OneLoneCoder collision
+bool RayVsRect(const Vec2f& rayOrigin, const Vec2f& rayDir, const Aabb& target, Vec2f& contactPoint, Vec2f& contactNormal, float& targetHitNear)
+{
+	contactNormal = { 0.0f,0.0f };
+	contactPoint = { 0.0f,0.0f };
+
+	// Cache division
+	Vec2f invdir = 1.0f / rayDir;
+
+	// Calculate intersections with rectangle bounding axes
+	Vec2f tNear = (target.pos - rayOrigin) * invdir;
+	Vec2f tFar = (target.pos + target.size - rayOrigin) * invdir;
+
+	if (std::isnan(tFar.y) || std::isnan(tFar.x)) { return false; }
+	if (std::isnan(tNear.y) || std::isnan(tNear.x)) { return false; }
+
+	// Sort distances
+	if (tNear.x > tFar.x) { std::swap(tNear.x, tFar.x); }
+	if (tNear.y > tFar.y) { std::swap(tNear.y, tFar.y); }
+
+	// Early rejection		
+	if (tNear.x > tFar.y || tNear.y > tFar.x) { return false; }
+
+	// Closest 'time' will be the first contact
+	targetHitNear = std::max(tNear.x, tNear.y);
+
+	// Furthest 'time' is contact on opposite side of target
+	float tHitFar = std::min(tFar.x, tFar.y);
+
+	// Reject if ray direction is pointing away from object
+	if (tHitFar < 0)
+	{
+		return false;
+	}
+
+	// Contact point of collision from parametric line equation
+	contactPoint = rayOrigin + targetHitNear * rayDir;
+
+	//ASDF
+	// the problem:
+	// this isn't taking parallel movement into account. The side wall is, indeed, closer
+	// but it's not actually trying to move in that direction
+	if (tNear.x > tNear.y)
+	{
+		if (invdir.x < 0.0f)
+		{
+			contactNormal = { 1, 0 };
+		}
+		else
+		{
+			contactNormal = { -1, 0 };
+		}
+	}
+	else if (tNear.x < tNear.y)
+	{	
+		if (invdir.y < 0.0f)
+		{
+			contactNormal = { 0, 1 };
+		}
+		else
+		{
+			contactNormal = { 0, -1 };
+		}
+	}
+
+	// Note if tNear == tFar, collision is principly in a diagonal
+	// so pointless to resolve. By returning a CN={0,0} even though its
+	// considered a hit, the resolver wont change anything.
+	return true;		
+}
+
+bool IsCollidingMovingAabbVsAabb(const float& dt, const Aabb& movingRect, const Vec2f& velocity, const Aabb& staticRect, Vec2f& intersectionPoint, Vec2f& intersectionNormal, float& contactTimeRatio)
+{
+
+// Check if dynamic rec:tangle is actually moving - we assume rectangles are NOT in collision to start
+	if (IsZero(velocity))
+	{
+		return false;
+	}
+
+	// Expand target rectangle by source dimensions
+	Aabb expanded_target;
+	expanded_target.pos = staticRect.pos - movingRect.size / 2.0f;
+	expanded_target.size = staticRect.size + movingRect.size;
+
+	if (RayVsRect(movingRect.pos + movingRect.size / 2.0f, velocity * dt, expanded_target, intersectionPoint, intersectionNormal, contactTimeRatio))
+	{
+		return (contactTimeRatio >= 0.0f && contactTimeRatio < 1.0f);
+	}	
+
+	return false;
+}
+
+bool ResolveMovingAabbVsAabb(const float& dt, const Aabb& movingRect, Vec2f& velocity, const Aabb& staticRect, std::array<Aabb*, 4>& contact)
+{
+	Vec2f contactPoint, contactNormal;
+	float contactTime = 0.0f;
+	if (IsCollidingMovingAabbVsAabb(dt, movingRect, velocity, staticRect, contactPoint, contactNormal, contactTime))
+	{
+		//contact[0] = (contactNormal.y > 0.0f) ? &staticRect : nullptr;
+		//contact[1] = (contactNormal.x < 0.0f) ? &staticRect : nullptr;
+		//contact[2] = (contactNormal.y < 0.0f) ? &staticRect : nullptr;
+		//contact[3] = (contactNormal.x > 0.0f) ? &staticRect : nullptr;
+
+
+		velocity += contactNormal * Vec2f(std::abs(velocity.x), std::abs(velocity.y)) * (1.0f - contactTime);
+		return true;
+	}
+
+	
+	return false;
+}
+
+
+Aabb MinkowskiDifference(const Aabb& a, const Aabb& b)
+{
+	Vec2f topLeft = a.pos - (b.pos+b.size);
+	Vec2f fullSize = a.size + b.size;
+	//return new Aabb{topLeft + (fullSize / 2.0f), fullSize / 2.0f};
+	return Aabb{topLeft, fullSize};
+}
+
+Vec2f ClosestPointOnBoundsToPoint(const Aabb& box, const Vec2f& point)
+{
+	// test x first
+	float minDist = abs(point.x - box.pos.x);
+	Vec2f boundsPoint(box.pos.x, point.y);
+	Vec2f max = box.pos + box.size;
+	if (abs(max.x - point.x) < minDist)
+	{
+		minDist = abs(max.x - point.x);
+		boundsPoint = Vec2f(max.x, point.y);
+	}
+	if (abs(max.y - point.y) < minDist)
+	{
+		minDist = abs(max.y - point.y);
+		boundsPoint = Vec2f(point.x, max.y);
+	}
+	if (abs(box.pos.y - point.y) < minDist)
+	{
+		minDist = abs(box.pos.y - point.y);
+		boundsPoint = Vec2f(point.x, box.pos.y);
+	}
+	return boundsPoint;
+}
+
