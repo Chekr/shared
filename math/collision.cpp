@@ -122,6 +122,33 @@ Collision::INTERSECT_RESULT ClosestPointOnLine(const Vec2f& point, const Vec2f& 
 	return Collision::INTERSECTING;
 }
 
+Vec2f ClosestPointOnLineSegment(const Vec2f& point, const Vec2f& lineStart, const Vec2f& lineEnd)
+{
+	float lineMag;
+	float u;
+	
+	lineMag = Distance(lineEnd, lineStart);
+
+	u = (((point.x - lineStart.x) * (lineEnd.x - lineStart.x)) +
+						((point.y - lineStart.y) * (lineEnd.y - lineStart.y)))
+				/ (lineMag * lineMag);
+
+	if (u < 0.0f)
+	{
+		return lineStart;
+	}
+	else if(u > 1.0f)
+	{
+		return lineEnd;
+	}
+
+	return Vec2f(
+		lineStart.x + u * (lineEnd.x - lineStart.x),
+		lineStart.y + u * (lineEnd.y - lineStart.y)
+		);
+}
+
+
 float DistanceSqrd(const Vec2f& pt1, const Vec2f& pt2)
 {
 	float dx = (pt1.x - pt2.x);

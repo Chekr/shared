@@ -41,6 +41,7 @@ bool LineCollision(const Vec2f& A1, const Vec2f& A2, const Vec2f& B1, const Vec2
 Collision::INTERSECT_RESULT LineSegmentIntersection(const Vec2f& p0, const Vec2f& p1, const Vec2f& p2, const Vec2f& p3, Vec2f& intersection);
 Collision::INTERSECT_RESULT DistancePointLine(const Vec2f& point, const Vec2f& lineStart, const Vec2f& lineEnd, float& distance);
 Collision::INTERSECT_RESULT ClosestPointOnLine(const Vec2f& point, const Vec2f& lineStart, const Vec2f& lineEnd, Vec2f& closestPoint);
+Vec2f ClosestPointOnLineSegment(const Vec2f& point, const Vec2f& lineStart, const Vec2f& lineEnd);
 float DistanceSqrd(const Vec2f& pt1, const Vec2f& pt2);
 float Distance(const Vec2f& pt1, const Vec2f& pt2);
 Collision::WINDING FindTripletOrientation(const Vec2f& p, const Vec2f& q, const Vec2f& r);
