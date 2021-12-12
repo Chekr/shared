@@ -47,6 +47,10 @@ float Distance(const Vec2f& pt1, const Vec2f& pt2);
 Collision::WINDING FindTripletOrientation(const Vec2f& p, const Vec2f& q, const Vec2f& r);
 bool IsPointInsidePolygon(const vector<Vec2f>& polygon, const Vec2f& p, const float& polygonXMax);
 bool IsPointInFov(const Vec2f& pos, const Vec2f& heading, const Vec2f& target, const float& fov);
+bool IntersectionOfLineAndCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& center, const float& radius, Vec2f& colA, Vec2f& colB);
+bool IntersectionOfLineAndMovingCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent);
+bool IntersectionOfLineAndMovingCircle2(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent);
+
 
 bool IsPointInsideAabb(const Vec2f& p, const Aabb& rect);
 bool IsCollidingAabbVsAabb(const Aabb& r1, const Aabb& r2);
@@ -55,5 +59,7 @@ bool IsCollidingMovingAabbVsAabb(const float& dt, const Aabb& movingRect, const 
 bool ResolveMovingAabbVsAabb(const float& dt, const Aabb& movingRect, Vec2f& velocity, const Aabb& staticRect, std::array<Aabb*, 4>& contact);
 Aabb MinkowskiDifference(const Aabb& a, const Aabb& b);
 Vec2f ClosestPointOnBoundsToPoint(const Aabb& box, const Vec2f& point);
+bool IntersectionOfLineExtensionAndMovingCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent);
+
 
 #endif

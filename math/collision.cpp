@@ -1,4 +1,6 @@
 #include "collision.h"
+#include "math-helpers.h"
+
 
 bool LineCollision(const Vec2f& a1, const Vec2f& a2,
 	const Vec2f& b1, const Vec2f& b2)
@@ -215,6 +217,332 @@ bool IsPointInFov(const Vec2f& pos, const Vec2f& heading, const Vec2f& target, c
 	return pos.dot(toTarget) >= cos(fov/2.0f);
 }
 
+bool IntersectionOfLineAndCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& center, const float& radius, Vec2f& colA, Vec2f& colB)
+{
+	float a,b,c;
+	float bb4ac;
+	Vec2f  dp;
+
+	dp.x = pB.x - pA.x;
+	dp.y = pB.y - pA.y;
+	a = dp.x * dp.x + dp.y * dp.y;
+	b = 2.0f * (dp.x * (pA.x - center.x) + dp.y * (pA.y - center.y)); 
+	c = center.x * center.x + center.y * center.y;
+	c += pA.x * pA.x + pA.y * pA.y;
+	c -= 2.0f * (center.x * pA.x + center.y * pA.y);
+	c -= radius * radius;
+	bb4ac = b * b - 4.0f * a * c;
+	if (IsZero(std::abs(a)) || bb4ac < 0.0f)
+	{
+		return false;
+	}
+
+	float muA = (-b + sqrt(bb4ac)) / (2.0f * a);
+    colA = pA + muA*(pB-pA);
+	float muB = (-b - sqrt(bb4ac)) / (2.0f * a);
+    colB = pA + muB*(pB-pA);
+
+	return true;
+}
+
+bool IntersectionOfLineAndMovingCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent)
+{
+	// Extend the line toward the Source position by "radius" amount
+	Vec2f lineCollision;
+	Vec2f circleCollisionA;
+	Vec2f circleCollisionB;
+
+	Vec2f centered = pB-pA;
+	Vec2f startCentered = start - pA;
+	int startSide = centered.sign(startCentered); // return (+1/-1) to know what way to extrude
+    Vec2f perp = centered.perpendicular().normalize()*startSide*radius;
+	Vec2f pC = pA+perp;
+	Vec2f pD = pB+perp;
+	
+    // Check if line has been crossed
+    Vec2f colCenter = pD-pC;
+    Vec2f startOffcentered = start - pC;
+    Vec2f targetOffcentered = target - pC;
+    int colStartSide = colCenter.sign(startOffcentered);
+    int colTargetSide = colCenter.sign(targetOffcentered);
+    // If moving along line
+    if(colStartSide == colTargetSide && colStartSide != startSide) { return false; }
+    // If on line and moving away
+    if(colStartSide != colTargetSide && colTargetSide == startSide) { return false; } // 
+
+
+
+	// Make sure start position wasn't past the extrusion (precision error)
+	//Vec2f altCentered = pD-pC;
+	//Vec2f altStartCentered = start - pC;
+	//Vec2f altStartSide = altCentered.sign(altStartCentered);
+	//if(???) {} 
+
+	// Find intersection of line and movement path 
+	Vec2f lineIntersection;
+	Collision::INTERSECT_RESULT res = LineSegmentIntersection(pC, pD, start, target, lineIntersection);
+
+	// !! Should there be a pre-check for performance to look for a collision
+	// !! between the end points and movement path (shortest distance between 
+	// !! point and line?
+
+	// Find collision points between movement path and line endpoints
+    float distance;
+    float rSq = radius*radius;
+    float distAToStartSq = (pA - start).norm();
+    float distAToTargetSq = (pA - target).norm();
+    float distBToStartSq = (pB - start).norm();
+    float distBToTargetSq = (pB - target).norm();
+    //std::cout << distBToTargetSq << " " << rSq << std::endl;
+	bool pACollision = 
+        distAToStartSq < rSq
+        || distAToTargetSq < rSq
+        || (DistancePointLine(pA, start, target, distance) == Collision::INTERSECTING 
+                && distance < radius
+            );
+               //&& IntersectionOfLineAndCircle(start, target, pA, radius, pAColA, pAColB);
+    bool pBCollision = 
+        distBToStartSq < rSq
+        || distBToTargetSq < rSq
+        || (DistancePointLine(pB, start, target, distance) == Collision::INTERSECTING
+                && distance < radius
+            );
+                //&& IntersectionOfLineAndCircle(start, target, pB, radius, pBColA, pBColB);
+
+	Vec2f pAColA, pAColB;
+    Vec2f pBColA, pBColB;
+    if(pACollision)
+    {
+        IntersectionOfLineAndCircle(start, target, pA, radius, pAColA, pAColB);
+        std::cout << "A="
+        << " s:" << start
+        << " t:" << target
+        << " p:" << pA
+        << " r:" << radius
+        << " 1:" << pAColA
+        << " 2:" << pAColB
+        << " l1:" << (pAColA - start).length()
+        << " l2:" << (pAColB - start).length();
+    }
+    if(pBCollision)
+    {
+        IntersectionOfLineAndCircle(start, target, pB, radius, pBColA, pBColB);
+        std::cout << "B="
+        << " d:" << distance
+        << " s:" << start
+        << " t:" << target
+        << " p:" << pB
+        << " r:" << radius
+        << " 1:" << pBColA
+        << " 2:" << pBColB
+        << " l1:" << (pBColA - start).length()
+        << " l2:" << (pBColB - start).length();
+    }
+
+
+
+	//bool hasCollision = false;
+    enum ColliderType
+    {
+        NONE = 0,
+        LINE,
+        POINTA,
+        POINTB,
+    };
+    ColliderType collider = ColliderType::NONE;
+
+
+	if(res == Collision::INTERSECT_RESULT::INTERSECTING)
+	{
+		//hasCollision = true;
+        collider = ColliderType::LINE;
+		intersect = lineIntersection; 
+        //isLineCollision = true;
+	}
+	if(pACollision)
+	{
+std::cout << "b";
+		float pAColADistSq = (pAColA - start).norm();
+		float pAColBDistSq = (pAColB - start).norm();
+		float closestPointDistSq;
+		Vec2f closestPoint;
+		if(pAColADistSq < pAColBDistSq)
+		{
+			closestPoint = pAColA;
+			closestPointDistSq = pAColADistSq;
+		}
+		else
+		{
+			closestPoint = pAColB;
+			closestPointDistSq = pAColBDistSq;
+		}
+
+
+		if(collider == ColliderType::NONE)
+		{
+			float intersectionDistSq = (intersect - start).norm();
+			if(closestPointDistSq < intersectionDistSq)
+			{
+				intersect = closestPoint;
+                collider = ColliderType::POINTA;
+			} 
+		}
+        else
+        {
+            intersect = closestPoint;
+            collider = ColliderType::POINTA;
+        }
+	}
+	if(pBCollision)
+	{
+std::cout << "c";
+		float pBColADistSq = (pBColA - start).norm();
+		float pBColBDistSq = (pBColB - start).norm();
+		float closestPointDistSq;
+		Vec2f closestPoint;
+		if(pBColADistSq < pBColBDistSq)
+		{
+			closestPoint = pBColA;
+			closestPointDistSq = pBColADistSq;
+		}
+		else
+		{
+			closestPoint = pBColB;
+			closestPointDistSq = pBColBDistSq;
+		}
+
+
+		if(collider == ColliderType::NONE)
+		{
+			float intersectionDistSq = (intersect - start).norm();
+			if(closestPointDistSq < intersectionDistSq)
+			{
+				intersect = closestPoint;
+                collider = ColliderType::POINTB;
+			} 
+		}
+        else
+        {
+            intersect = closestPoint;
+            collider = ColliderType::POINTB;
+
+        }
+	}
+
+
+    switch(collider)
+    {
+    case LINE:
+        {
+            Vec2f v = target-start;
+            Vec2f vd = pB-pA;
+            v = vd * (v.x*vd.x + v.y*vd.y) / (vd.x*vd.x + vd.y*vd.y);
+            tangent = v;
+        }
+        break;
+    case POINTA:
+        {
+            float length = (pB-pA).length();
+            tangent = (intersect-pA).perpendicular().normalize()*length;
+std::cout << "2";
+
+        }
+        break;
+    case POINTB:
+        {
+            float length = (pB-pA).length();
+            tangent = (intersect-pB).perpendicular().normalize()*length;
+std::cout << "3" << length << " " << intersect << " " << tangent << std::endl;
+        }
+        break;
+    };
+
+	return collider != ColliderType::NONE;	
+}
+/*
+bool IntersectionOfLineAndMovingCircle2(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent)
+{
+	// Extend the line toward the Source position by "radius" amount
+	Vec2f lineCollision;
+	Vec2f circleCollisionA;
+	Vec2f circleCollisionB;
+
+	Vec2f centered = pB-pA;
+	Vec2f startCentered = start - pA;
+	int startSide = centered.sign(startCentered); // return (+1/-1) to know what way to extrude
+    Vec2f perp = centered.perpendicular().normalize()*startSide*radius;
+	Vec2f pC = pA+perp;
+	Vec2f pD = pB+perp;
+	
+    // Check if line has been crossed
+    Vec2f colCenter = pD-pC;
+    Vec2f startOffcentered = start - pC;
+    Vec2f targetOffcentered = target - pC;
+    int colStartSide = colCenter.sign(startOffcentered);
+    int colTargetSide = colCenter.sign(targetOffcentered);
+    // If moving along line
+    if(colStartSide == colTargetSide && colStartSide != startSide) { return false; }
+    // If on line and moving away
+    if(colStartSide != colTargetSide && colTargetSide == startSide) { return false; } // 
+
+
+
+	// Make sure start position wasn't past the extrusion (precision error)
+	//Vec2f altCentered = pD-pC;
+	//Vec2f altStartCentered = start - pC;
+	//Vec2f altStartSide = altCentered.sign(altStartCentered);
+	//if(???) {} 
+
+	// Find intersection of line and movement path 
+	Vec2f lineIntersection;
+	Collision::INTERSECT_RESULT res = LineSegmentIntersection(pC, pD, start, target, lineIntersection);
+
+	// !! Should there be a pre-check for performance to look for a collision
+	// !! between the end points and movement path (shortest distance between 
+	// !! point and line?
+
+	// Find collision points between movement path and line endpoints
+    float distance;
+    float rSq = radius*radius;
+    float distAToStartSq = (pA - start).norm();
+    float distAToTargetSq = (pA - target).norm();
+    float distBToStartSq = (pB - start).norm();
+    float distBToTargetSq = (pB - target).norm();
+    //std::cout << distBToTargetSq << " " << rSq << std::endl;
+
+	//bool hasCollision = false;
+    enum ColliderType
+    {
+        NONE = 0,
+        LINE,
+        POINTA,
+        POINTB,
+    };
+    ColliderType collider = ColliderType::NONE;
+
+
+	if(res == Collision::INTERSECT_RESULT::INTERSECTING)
+	{
+		//hasCollision = true;
+        collider = ColliderType::LINE;
+		intersect = lineIntersection; 
+        //isLineCollision = true;
+
+        // line collider
+        Vec2f v = target-start;
+        Vec2f vd = pB-pA;
+        v = vd * (v.x*vd.x + v.y*vd.y) / (vd.x*vd.x + vd.y*vd.y);
+        tangent = v;
+
+
+	}
+
+
+
+   	return collider != ColliderType::NONE;	
+}
+*/
+
 bool IsPointInsideAabb(const Vec2f& p, const Aabb& rect)
 {
 	return (p.x >= rect.pos.x && p.y >= rect.pos.y && p.x < rect.pos.x + rect.size.x && p.y < rect.pos.y + rect.size.y);
@@ -371,3 +699,63 @@ Vec2f ClosestPointOnBoundsToPoint(const Aabb& box, const Vec2f& point)
 	return boundsPoint;
 }
 
+bool IntersectionOfLineExtensionAndMovingCircle(const Vec2f& pA, const Vec2f& pB, const Vec2f& start, const Vec2f& target, const float& radius, Vec2f& intersect, Vec2f& tangent)
+{
+	// Extend the line toward the Source position by "radius" amount
+	Vec2f centered = pB-pA;
+	Vec2f startCentered = start - pA;
+	int startSide = centered.sign(startCentered); // return (+1/-1) to know what way to extrude
+    Vec2f perp = centered.perpendicular().normalize()*startSide*radius;
+	Vec2f pC = pA+perp;
+	Vec2f pD = pB+perp;
+	
+    // Check if line has been crossed
+    Vec2f colCenter = pD-pC;
+    Vec2f startOffcentered = start - pC;
+    Vec2f targetOffcentered = target - pC;
+    int colStartSide = colCenter.sign(startOffcentered);
+    int colTargetSide = colCenter.sign(targetOffcentered);
+    // If moving along line
+    if(colStartSide == colTargetSide && colStartSide != startSide) { return false; }
+    // If on line and moving away
+    if(colStartSide != colTargetSide && colTargetSide == startSide) { return false; } // 
+
+    // NOTE : Conincident might not fire because of the above "moving along line" test
+
+	// Make sure start position wasn't past the extrusion (precision error)
+	//Vec2f altCentered = pD-pC;
+	//Vec2f altStartCentered = start - pC;
+	//Vec2f altStartSide = altCentered.sign(altStartCentered);
+	//if(???) {} 
+
+	// Find intersection of line and movement path 
+	Vec2f lineIntersection;
+	Collision::INTERSECT_RESULT res = LineSegmentIntersection(pC, pD, start, target, lineIntersection);
+
+    bool hasCollision = false;
+
+	if(res == Collision::INTERSECT_RESULT::INTERSECTING)
+	{
+		intersect = lineIntersection; 
+        hasCollision = true;
+
+        Vec2f v = target-start;
+        Vec2f vd = pB-pA;
+        v = vd * (v.x*vd.x + v.y*vd.y) / (vd.x*vd.x + vd.y*vd.y);
+        tangent = v;
+	}
+    else if(res == Collision::COINCIDENT)
+    {
+		intersect = lineIntersection; 
+        hasCollision = true;
+        tangent = target-start;
+    }
+
+
+    //Vec2f v = target-start;
+    //Vec2f vd = pB-pA;
+    //v = vd * (v.x*vd.x + v.y*vd.y) / (vd.x*vd.x + vd.y*vd.y);
+    //tangent = v;
+
+	return hasCollision;	
+}

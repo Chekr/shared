@@ -130,10 +130,8 @@ public:
 		T val = atan2(det(target), dot(target));
 		return val < 0.0f ? val = -val : val += T(g_pi);
 	}
-	Vec2& rotate(float angle)
+	Vec2& rotate(float theta)
 	{
-		float theta = DegreesToRadians(angle);
-
 		T cs = std::cos(theta);
 		T sn = std::sin(theta);
 
@@ -151,10 +149,11 @@ public:
 		{
 			return -1;
 		}
-		else
+        if(y*v2.x < x*v2.y)
 		{
 			return 1;
 		}
+        return 0;
 	}
 
 	T x, y;
