@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <iostream>
 #include <cmath>
+#include <cstdint>
 
 #include <vector>
 

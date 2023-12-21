@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <cstdint>
 
 #include "math-helpers.h"
 
