@@ -8,30 +8,31 @@
 #include <filesystem> // Microsoft-specific implementation header file name  
 #endif
 
-using namespace std::experimental::filesystem::v1;
+//using namespace std::experimental::filesystem::v1;
+using namespace std::experimental::filesystem;
 
 namespace FileHelper
 {
-	bool DoesDirectoryExist(string directory)
+	bool DoesDirectoryExist(std::string directory)
 	{
 		return std::experimental::filesystem::exists(directory);
 	}
 
-	bool DoesFileExist(string filename)
+	bool DoesFileExist(std::string filename)
 	{
 		return std::experimental::filesystem::exists(filename);
 	}
 
-	bool MakeDirectory(string directory)
+	bool MakeDirectory(std::string directory)
 	{
 		return std::experimental::filesystem::create_directories(directory);
 	}
 
-	void WriteFile(string filename, vector<string> outLines)
+	void WriteFile(std::string filename, std::vector<std::string> outLines)
 	{
 		ofstream myfile;
 		myfile.open(filename);
-		for (string outputLine : outLines)
+		for (std::string outputLine : outLines)
 		{
 			myfile << outputLine << endl;
 		}
@@ -39,11 +40,11 @@ namespace FileHelper
 		myfile.close();
 	}
 
-	void AppendFile(string filename, vector<string> outLines)
+	void AppendFile(std::string filename, std::vector<std::string> outLines)
 	{
 		ofstream myfile;
 		myfile.open(filename, std::ios_base::app);
-		for (string outputLine : outLines)
+		for (std::string outputLine : outLines)
 		{
 			myfile << outputLine << endl;
 		}
@@ -51,7 +52,7 @@ namespace FileHelper
 		myfile.close();
 	}
 
-	void AppendFile(string filename, string outputLine)
+	void AppendFile(std::string filename, std::string outputLine)
 	{
 		ofstream myfile;
 		myfile.open(filename, std::ios_base::app);
@@ -61,18 +62,19 @@ namespace FileHelper
 		myfile.close();
 	}
 
-	vector<string> ReadFile(string filename)
+	std::vector<std::string> ReadFile(std::string filename)
 	{
-		vector<string> output;
+		std::vector<std::string> output;
 
-		string line;
+
+		std::string line;
 		ifstream inputFile(filename);
 		if (inputFile.is_open())
 		{
 			if (getline(inputFile, line))
 			{
-				string first_three = line.substr(0, 3);
-				const string test = "\xEF\xBB\xBF";
+				std::string first_three = line.substr(0, 3);
+				const std::string test = "\xEF\xBB\xBF";
 				if (first_three == test)
 				{
 					line = line.substr(3);

@@ -1,5 +1,4 @@
 #ifndef PARSING_HELPER_H
-#pragma once
 #define PARSING_HELPER_H
 
 #include <string>
@@ -10,11 +9,6 @@
 #include <cmath>
 #include <iomanip>
 #include <fstream>
-
-using std::strspn;
-using std::strcspn;
-using std::string;
-
 
 //enum StringType
 //{
@@ -36,9 +30,9 @@ using std::string;
 //	StringType type;
 //};
 
-static string ToUpperCase(const std::string& s)
+static std::string ToUpperCase(const std::string& s)
 {
-	string output;
+	std::string output;
 	transform(s.begin(), s.end(), std::back_inserter(output), toupper);
 	return output;
 }
@@ -51,8 +45,8 @@ static bool IsSpace(const char c)
 static std::string ParseString(const char *&token)
 {
 	std::string s;
-	token += strspn(token, " \t");
-	size_t e = strcspn(token, " \t\r");
+	token += std::strspn(token, " \t");
+	size_t e = std::strcspn(token, " \t\r");
 	s = std::string(token, &token[e]);
 	token += e;
 	return s;
@@ -60,9 +54,9 @@ static std::string ParseString(const char *&token)
 
 static int ParseInt(const char *&token)
 {
-	token += strspn(token, " \t");
+	token += std::strspn(token, " \t");
 	int i = atoi(token);
-	token += strcspn(token, " \t\r");
+	token += std::strcspn(token, " \t\r");
 	return i;
 }
 
@@ -206,27 +200,29 @@ static void ParseFloat2(float &x, float &y, const char *&token)
 	x = ParseFloat(token);
 	y = ParseFloat(token);
 }
-
-static string& LTrim(string& s)
+/*
+// DEPRECATED - for C++ 03
+static std::string& LTrim(std::string& s)
 {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(),
 		std::ptr_fun<int, int>(std::isgraph)));
 	return s;
 }
 
-static string& RTrim(string& s)
+// DEPRECATED - for C++ 03
+static std::string& RTrim(std::string& s)
 {
 	s.erase(std::find_if(s.rbegin(), s.rend(),
 		std::ptr_fun<int, int>(std::isgraph)).base(), s.end());
 	return s;
 }
-
+*/
 //static string& trim(string& s)
 //{
 //	return ltrim(rtrim(s));
 //}
 
-static string Trim(const std::string& str,
+static std::string Trim(const std::string& str,
 	const std::string& whitespace = " \t")
 {
 	const auto strBegin = str.find_first_not_of(whitespace);
@@ -239,9 +235,9 @@ static string Trim(const std::string& str,
 	return str.substr(strBegin, strRange);
 }
 
-static string RemoveBreaks(const std::string& str)
+static std::string RemoveBreaks(const std::string& str)
 {
-	string strResult = str;
+	std::string strResult = str;
 	strResult.erase(std::remove(strResult.begin(), strResult.end(), '\n'), strResult.end());
 	return strResult;
 }
@@ -260,7 +256,7 @@ static bool IsTrue(const std::string& s)
 {
 	if(s == "") { return false; }
 
-	string stringBool = ToUpperCase(s);
+	std::string stringBool = ToUpperCase(s);
 	if(stringBool == "Y") { return true; }
 	if(stringBool == "YES") { return true; }
 	if(stringBool == "T") { return true; }
