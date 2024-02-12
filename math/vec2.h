@@ -4,7 +4,8 @@
 
 #include <iostream>
 #include <cmath>
-#include <cstdint>
+#include <stdint.h>
+
 
 #include "math-helpers.h"
 
@@ -162,6 +163,7 @@ public:
 
 typedef Vec2<float> Vec2f;
 typedef Vec2<int> Vec2i;
+typedef Vec2<int16_t> Vec2I16; 
 
 inline bool IsZero(Vec2f vec)
 {

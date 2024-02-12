@@ -37,6 +37,13 @@ struct Aabb
 	Vec2f size;
 };
 
+struct AabbI16
+{
+	Vec2I16 pos;
+	Vec2I16 size;
+};
+
+
 bool LineCollision(const Vec2f& A1, const Vec2f& A2, const Vec2f& B1, const Vec2f& B2);
 Collision::INTERSECT_RESULT LineSegmentIntersection(const Vec2f& p0, const Vec2f& p1, const Vec2f& p2, const Vec2f& p3, Vec2f& intersection);
 Collision::INTERSECT_RESULT DistancePointLine(const Vec2f& point, const Vec2f& lineStart, const Vec2f& lineEnd, float& distance);
